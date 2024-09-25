@@ -1,4 +1,4 @@
-# An Android Stack Overflow Questions App uses the last technologies and methodologies recommended by Google:
+# An Android Stack Overflow Questions App uses the lastest technologies and methodologies recommended by Google:
 
 - Integrated the Stack Overflow APIs to fetch and display questions and answers in real-time.
 - Used the latest Jetpack libraries such as ViewModel, LiveData, Room, Navigation Component, and Paging 3 for efficient, modular, and maintainable architecture.
