@@ -28,7 +28,7 @@ class AnswerRepositoryImpl @Inject constructor(
                 questionId,
                 pageSize = 30,
                 order = Order.asc,
-                sort = Sort.activity
+                sort = Sort.votes
             )
         }
 

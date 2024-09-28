@@ -5,9 +5,12 @@ import com.example.stackoverflow.data.repository.getanswerssrepository.AnswerRep
 import com.example.stackoverflow.data.repository.getanswerssrepository.AnswerRepositoryImpl
 import com.example.stackoverflow.data.repository.getquestionsrepository.QuestionRepository
 import com.example.stackoverflow.data.repository.getquestionsrepository.QuestionRepositoryImpl
+import com.example.stackoverflow.data.repository.searchquestionrepository.SearchQuestionRepository
+import com.example.stackoverflow.data.repository.searchquestionrepository.SearchQuestionRepositoryImpl
 import com.example.stackoverflow.data.room.AppDatabase
 import com.example.stackoverflow.domain.usecase.GetAnswersUseCase
 import com.example.stackoverflow.domain.usecase.GetQuestionsUseCase
+import com.example.stackoverflow.domain.usecase.SearchUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,6 +33,18 @@ object UseCaseModule {
     @Singleton
     fun getQuestionUseCase(repository: QuestionRepository) : GetQuestionsUseCase {
         return GetQuestionsUseCase(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun getSearchRepository(networkService: StackOverflowNetworkService, appDatabase: AppDatabase) : SearchQuestionRepository {
+        return SearchQuestionRepositoryImpl(networkService, appDatabase)
+    }
+
+    @Provides
+    @Singleton
+    fun getSearchUseCase(repository: SearchQuestionRepository) : SearchUseCase {
+        return SearchUseCase(repository)
     }
 
     @Provides

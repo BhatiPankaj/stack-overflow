@@ -7,3 +7,7 @@ enum class Order {
 enum class Sort {
     activity, votes, creation, hot, week, month
 }
+
+enum class SearchSort {
+    activity, votes, creation, relevance
+}

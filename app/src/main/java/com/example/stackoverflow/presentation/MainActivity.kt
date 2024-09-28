@@ -10,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -64,7 +65,7 @@ fun StackOverflowApp(modifier: Modifier = Modifier) {
             }
         }
         composable(NavDestinations.QUESTION_SEARCH_SCREEN) {
-            QuestionSearchScreen()
+            QuestionSearchScreen(navController = navController)
         }
     }
 }

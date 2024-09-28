@@ -3,6 +3,7 @@ package com.example.stackoverflow.data.network
 import com.example.stackoverflow.data.network.model.AnswersResponse
 import com.example.stackoverflow.data.network.model.QuestionsResponse
 import com.example.stackoverflow.data.network.utils.Order
+import com.example.stackoverflow.data.network.utils.SearchSort
 import com.example.stackoverflow.data.network.utils.Sort
 import retrofit2.Response
 import retrofit2.http.GET
@@ -34,4 +35,15 @@ interface StackOverflowNetworkService {
         @Query("site") site: String = "stackoverflow",
         @Query("filter") filter: String = "withbody"
     ): Response<AnswersResponse>
+
+    @GET("similar")
+    suspend fun search(
+        @Query("page") page: Int = 1,
+        @Query("pagesize") pageSize: Int,
+        @Query("title") query: String,
+        @Query("order") order: Order,
+        @Query("sort") sort: SearchSort,
+        @Query("key") key: String = API_KEY,
+        @Query("site") site: String = "stackoverflow"
+    ): Response<QuestionsResponse>
 }

@@ -10,7 +10,7 @@ import kotlinx.parcelize.Parcelize
 data class OwnerEntity(
     @PrimaryKey val accountId: Int,
     val userId: Int,
-    val profileImageLink: String,
+    val profileImageLink: String?,
     val name: String,
-    val profileLink: String
+    val profileLink: String?
 ) : Parcelable

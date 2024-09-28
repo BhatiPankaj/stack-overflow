@@ -8,7 +8,5 @@ class GetAnswersUseCase @Inject constructor(private val answerRepository: Answer
 
     fun getErrorFlow() = answerRepository.getAnswersErrorFlow()
 
-    suspend fun fetchAnswers(questionId: Long) {
-        answerRepository.fetchAnswers(questionId)
-    }
+    suspend fun fetchAnswers(questionId: Long) = answerRepository.fetchAnswers(questionId)
 }
