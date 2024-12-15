@@ -2,6 +2,7 @@ package com.example.stackoverflow.presentation.questionlist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import com.example.stackoverflow.domain.usecase.GetQuestionsUseCase
 import com.example.stackoverflow.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +17,7 @@ class QuestionListViewModel @Inject constructor(private val getQuestionsUseCase:
         }
     }
 
-    val questionListFlow = getQuestionsUseCase.getQuestions()
+    val questionListFlow = getQuestionsUseCase.getQuestions().cachedIn(viewModelScope)
     val questionsErrorFlow = getQuestionsUseCase.questionsErrorFlow
     var lastResult: Result<*> = Result.Loading
 }

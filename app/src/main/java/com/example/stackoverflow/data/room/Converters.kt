@@ -9,7 +9,7 @@ class Converters {
     }
 
     @TypeConverter
-    fun toTagsList(tagsString: String?): List<String>? {
+    fun toTagsList(tagsString: String?): List<String> {
         return tagsString?.split(",") ?: emptyList()
     }
 }

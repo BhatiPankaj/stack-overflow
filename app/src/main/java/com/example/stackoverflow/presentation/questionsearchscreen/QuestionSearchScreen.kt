@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -47,10 +48,14 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import com.example.stackoverflow.R
 import com.example.stackoverflow.data.room.entity.SearchHistoryEntity
 import com.example.stackoverflow.domain.utils.Result
 import com.example.stackoverflow.presentation.questionlist.QuestionCard
+import com.example.stackoverflow.presentation.questionlist.RetryButton
 
 @Composable
 fun QuestionSearchScreen(
@@ -60,7 +65,7 @@ fun QuestionSearchScreen(
     var query by remember { mutableStateOf("") }
     var isFocused by remember { mutableStateOf(false) }
     val result by viewModel.questionsErrorFlow.collectAsState(viewModel.lastResult)
-    val questionList by viewModel.searchedList.collectAsState()
+    val questionList =  viewModel.searchResult.collectAsLazyPagingItems()
     var showSearchHistory by remember { mutableStateOf(false) }
     val searchedHistoryList by viewModel.searchedHistoryList.collectAsState(null)
 
@@ -93,9 +98,9 @@ fun QuestionSearchScreen(
 
                 is Result.Success -> {
                     LazyColumn {
-                        questionList?.let {
-                            items(count = it.size) { index ->
-                                QuestionCard(questionList!![index], navController)
+                        items(count = questionList.itemCount) { index ->
+                            questionList[index]?.let {
+                                QuestionCard(it, navController)
                                 HorizontalDivider(
                                     modifier = Modifier
                                         .padding(horizontal = 16.dp)
@@ -103,6 +108,38 @@ fun QuestionSearchScreen(
                                     thickness = 1.dp,
                                     color = Color.LightGray // Grey color for the separator
                                 )
+                            }
+                        }
+
+                        questionList.apply {
+                            when {
+                                loadState.refresh is LoadState.Loading ->
+                                    item {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(16.dp)
+                                                .wrapContentWidth(Alignment.CenterHorizontally)
+                                        )
+                                    }
+
+
+                                loadState.append is LoadState.Loading ->
+                                    item {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(16.dp)
+                                                .wrapContentWidth(Alignment.CenterHorizontally)
+                                        )
+                                    }
+
+
+                                loadState.append is LoadState.Error ->
+                                    item {
+                                        RetryButton(onRetry = { retry() })
+                                    }
+
                             }
                         }
                     }

@@ -18,11 +18,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -54,6 +56,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.stackoverflow.data.room.entity.QuestionEntity
@@ -75,7 +80,7 @@ fun QuestionListScreen(
     val scope = rememberCoroutineScope()
 
     val result by viewModel.questionsErrorFlow.collectAsState(initial = viewModel.lastResult)
-    val questionList by viewModel.questionListFlow.collectAsState(null)
+    val questionList = viewModel.questionListFlow.collectAsLazyPagingItems()
 
     LaunchedEffect(result) {
         viewModel.lastResult = result
@@ -131,9 +136,11 @@ fun QuestionListScreen(
 
                 is Result.Success -> {
                     LazyColumn {
-                        questionList?.let {
-                            items(count = it.size) { index ->
-                                QuestionCard(questionList!![index], navController)
+                        items(
+                            count = questionList.itemCount,
+                            key = questionList.itemKey { question: QuestionEntity -> question.id }) { index ->
+                            questionList[index]?.let {
+                                QuestionCard(it, navController)
                                 HorizontalDivider(
                                     modifier = Modifier
                                         .padding(horizontal = 16.dp)
@@ -141,6 +148,38 @@ fun QuestionListScreen(
                                     thickness = 1.dp,
                                     color = Color.LightGray // Grey color for the separator
                                 )
+                            }
+                        }
+
+                        questionList.apply {
+                            when {
+                                loadState.refresh is LoadState.Loading ->
+                                    item {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(16.dp)
+                                                .wrapContentWidth(Alignment.CenterHorizontally)
+                                        )
+                                    }
+
+
+                                loadState.append is LoadState.Loading ->
+                                    item {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(16.dp)
+                                                .wrapContentWidth(Alignment.CenterHorizontally)
+                                        )
+                                    }
+
+
+                                loadState.append is LoadState.Error ->
+                                    item {
+                                        RetryButton(onRetry = { retry() })
+                                    }
+
                             }
                         }
                     }
@@ -156,6 +195,13 @@ fun QuestionListScreen(
     }
 }
 
+@Composable
+fun RetryButton(onRetry: () -> Unit) {
+    Button(onClick = onRetry) {
+        Text("Retry")
+    }
+}
+
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun QuestionCard(question: QuestionEntity, navController: NavController) {
@@ -165,6 +211,8 @@ fun QuestionCard(question: QuestionEntity, navController: NavController) {
             .fillMaxWidth()
             .padding(12.dp)
             .clickable {
+                // Using Uri.encode to make json string safe for navigation route URL.
+                // Because Json string can contain special characters and if we pass JSON string with special characters then it will exception.
                 navController.navigate("$QUESTION_DETAIL_SCREEN/${Uri.encode(Gson().toJson(question))}")
             },
         shape = MaterialTheme.shapes.extraSmall,

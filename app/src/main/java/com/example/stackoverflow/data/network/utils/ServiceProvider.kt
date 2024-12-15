@@ -13,7 +13,7 @@ object ServiceProvider {
                 else
                     Result.Success(response.body()!! as T)
             else
-                Result.Failure("Getting error while making the network API call.. The error code is ${response.code()}", Result.ErrorType.OTHER)
+                Result.Failure("Getting error while making the network API call. The error code is ${response.code()}", Result.ErrorType.OTHER)
         } catch (ex: NoInternetException) {
             Result.Failure("No internet connection.", Result.ErrorType.NETWORK_ISSUE, ex)
         }

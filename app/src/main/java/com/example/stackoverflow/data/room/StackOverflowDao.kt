@@ -1,5 +1,6 @@
 package com.example.stackoverflow.data.room
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -16,7 +17,7 @@ interface StackOverflowDao {
     suspend fun insertQuestions(question: List<QuestionEntity>)
 
     @Query("Select * from questions")
-    fun getQuestions(): Flow<List<QuestionEntity>>
+    fun getQuestions(): PagingSource<Int, QuestionEntity>
 
     @Query("Select * from answers where questionId = :questionId Order By score Desc")
     fun getAnswers(questionId: Long): Flow<List<AnswerEntity>>
@@ -32,5 +33,8 @@ interface StackOverflowDao {
 
     @Query("DELETE FROM SEARCH_HISTORY WHERE id=:id")
     suspend fun deletedSearchedEntry(id: Int)
+
+    @Query("Delete from questions")
+    suspend fun clearAllItems()
 
 }

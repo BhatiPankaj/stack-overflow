@@ -10,5 +10,6 @@ import androidx.room.PrimaryKey
 ])
 data class SearchHistoryEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val searchedText: String
+    val searchedText: String,
+    val nextKey: Int? = 0
 )

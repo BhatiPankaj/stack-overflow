@@ -1,5 +1,6 @@
 package com.example.stackoverflow.presentation
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,7 +11,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -61,7 +61,7 @@ fun StackOverflowApp(modifier: Modifier = Modifier) {
         ) { backStackEntry ->
             val question = backStackEntry.arguments?.getString("question")
             question?.let {
-                QuestionDetailScreen(Gson().fromJson(question, QuestionEntity::class.java))
+                QuestionDetailScreen(Gson().fromJson(Uri.decode(question), QuestionEntity::class.java))
             }
         }
         composable(NavDestinations.QUESTION_SEARCH_SCREEN) {

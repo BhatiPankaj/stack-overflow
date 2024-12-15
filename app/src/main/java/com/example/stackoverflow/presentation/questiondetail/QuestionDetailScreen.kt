@@ -134,7 +134,7 @@ fun QuestionDetailScreen(
                                     )
                                 }
                             }
-                            if (answers != null) {
+                            if (!answers.isNullOrEmpty()) {
                                 ShowAnswersBody(answers!!)
                             } else {
                                 Text(
